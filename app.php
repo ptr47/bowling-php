@@ -14,7 +14,7 @@ $game = new Game(10);
 
 while (!$game->isGameOver()) {
     $game->roll(getPinAmount());
-    echo "Current score: ", $game->getScore();
+    echo "Current score: ", $game->getScore(), PHP_EOL;
 }
 
 $game->drawScoreboard();
