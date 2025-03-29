@@ -11,22 +11,26 @@ class Game {
     private array $frames;
     private int $currentFrameIdx = 0;
 
-    public function __construct(int $framesAmount) {
+    public function __construct(int $framesAmount)
+    {
         $this->frames = array_fill(0, $framesAmount, new Frame());
     }
 
-    static public function isValidRoll(int $pins): bool {
+    static public function isValidRoll(int $pins): bool
+    {
         return ($pins >= 0) and ($pins <= self::MAX_PINS);
     }
 
-    public function isGameOver(): bool {
+    public function isGameOver(): bool
+    {
         $currentFrame = $this->getCurrentFrame();
-        $isLastFrame = $this->currentFrameIdx === self::MAX_PINS - 1;
+        $isLastFrame = $this->currentFrameIdx === count($this->frames) - 1;
 
         return $isLastFrame and count($currentFrame->rolls) === 3;
     }
 
-    public function roll(int $pins): void {
+    public function roll(int $pins): void
+    {
 
         if (!self::isValidRoll($pins)) {
             echo "Incorrect pin amount: ".$pins;
@@ -41,21 +45,25 @@ class Game {
         }
     }
 
-    public function getScore(): int {
+    public function getScore(): int
+    {
         $score = 0;
         foreach ($this->frames as $frame) {
             $score += $frame->getScore();
         }
+
         return $score;
     }
 
-    public function drawScoreboard(): void {
+    public function drawScoreboard(): void
+    {
         foreach ($this->frames as $frame) {
             echo $frame->getRolls();
         }
     }
 
-    private function getCurrentFrame(): ?Frame {
+    private function getCurrentFrame(): ?Frame
+    {
         if (count($this->frames) > $this->currentFrameIdx) {
             return $this->frames[$this->currentFrameIdx];
         }
