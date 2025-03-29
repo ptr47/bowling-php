@@ -1,5 +1,17 @@
 <?php
+require_once 'Game.php';
 
-namespace Bowling;
+function getPinAmount(): int {
+    echo 'Enter pin amount: ';
+    $input = fgets(STDIN);
 
-$game = new Game();
+    return intval($input);
+}
+
+$game = new Game(10);
+
+
+while (!$game->isGameOver()) {
+    $game->roll(getPinAmount());
+    $game->drawScoreboard();
+}
