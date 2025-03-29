@@ -1,7 +1,8 @@
 <?php
 require_once 'Game.php';
 
-function getPinAmount(): int {
+function getPinAmount(): int
+{
     echo "Enter pin amount: ";
     $input = fgets(STDIN);
 

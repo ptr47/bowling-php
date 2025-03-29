@@ -2,7 +2,8 @@
 require_once 'Game.php';
 
 
-class Frame {
+class Frame
+{
     /**
      * @var array<int>
      */

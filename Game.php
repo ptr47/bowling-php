@@ -1,7 +1,8 @@
 <?php
 require_once 'Frame.php';
 
-class Game {
+class Game
+{
 
     const int MAX_PINS = 10;
 
