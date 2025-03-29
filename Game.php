@@ -14,7 +14,10 @@ class Game
 
     public function __construct(int $framesAmount)
     {
-        $this->frames = array_fill(0, $framesAmount, new Frame());
+        for ($i = 0; $i < $framesAmount - 1; $i++) {
+            $this->frames[] = new Frame();
+        }
+        $this->frames[] = new Frame(true);
     }
 
     static public function isValidRoll(int $pins): bool
@@ -24,10 +27,7 @@ class Game
 
     public function isGameOver(): bool
     {
-        $currentFrame = $this->getCurrentFrame();
-        $isLastFrame = $this->currentFrameIdx === count($this->frames) - 1;
-
-        return $isLastFrame and count($currentFrame->rolls) === 3;
+        return $this->currentFrameIdx === count($this->frames);
     }
 
     public function roll(int $pins): void
@@ -39,9 +39,8 @@ class Game
             return;
         }
         $currentFrame = $this->getCurrentFrame();
-        $currentFrame->addRoll($pins);
 
-        if (count($currentFrame->rolls) === 2) {
+        if ($currentFrame->addRoll($pins)) {
             $this->currentFrameIdx++;
         }
     }
@@ -59,7 +58,7 @@ class Game
     public function drawScoreboard(): void
     {
         foreach ($this->frames as $frame) {
-            echo $frame->getRolls();
+            var_export($frame->rolls);
         }
     }
 
