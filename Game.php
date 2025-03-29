@@ -38,7 +38,7 @@ class Game
 
             return;
         }
-        $currentFrame = $this->getCurrentFrame();
+        $currentFrame = $this->frames[$this->currentFrameIdx];
 
         if ($currentFrame->addRoll($pins)) {
             $this->currentFrameIdx++;
@@ -57,17 +57,17 @@ class Game
 
     public function drawScoreboard(): void
     {
+        echo str_repeat("+---", count($this->frames))."+".PHP_EOL;
         foreach ($this->frames as $frame) {
-            var_export($frame->rolls);
+            echo "|".str_pad($frame->getScore(), 3);
         }
+        echo "|".PHP_EOL;
+        echo str_repeat("+---", count($this->frames))."+".PHP_EOL;
+        echo "Final score: ".$this->getScore().PHP_EOL;
     }
 
-    private function getCurrentFrame(): ?Frame
+    public function getCurrentFrameIdx(): int
     {
-        if (count($this->frames) > $this->currentFrameIdx) {
-            return $this->frames[$this->currentFrameIdx];
-        }
-
-        return null;
+        return $this->currentFrameIdx;
     }
 }
