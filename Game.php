@@ -5,54 +5,48 @@ class Game {
 
     const int MAX_PINS = 10;
 
-    private int $score = 0; # maybe change to frame based score
     /**
      * @var array<Frame>
      */
-    private array $frames = [];
+    private array $frames;
     private int $currentFrameIdx = 0;
-    private bool $isGameOver = false;
 
     public function __construct(int $framesAmount) {
-        for ($i = 0; $i < $framesAmount; $i++) {
-            $this->frames[] = new Frame();
-        }
+        $this->frames = array_fill(0, $framesAmount, new Frame());
+    }
+
+    static public function isValidRoll(int $pins): bool {
+        return ($pins >= 0) and ($pins <= self::MAX_PINS);
     }
 
     public function isGameOver(): bool {
-        return $this->isGameOver;
+        $currentFrame = $this->getCurrentFrame();
+        $isLastFrame = $this->currentFrameIdx === self::MAX_PINS - 1;
+
+        return $isLastFrame and count($currentFrame->rolls) === 3;
     }
 
-    static public function isValidRoll($pins): bool {
-        if (is_numeric($pins)) {
-            return $pins >= 0 and $pins <= self::MAX_PINS;
-        }
-
-        return false;
-    }
-
-
-    public function roll($pins): void {
+    public function roll(int $pins): void {
 
         if (!self::isValidRoll($pins)) {
-            echo 'Incorrect pin amount: '.$pins;
+            echo "Incorrect pin amount: ".$pins;
 
             return;
         }
-        $this->getCurrentFrame()->addRoll($pins);
+        $currentFrame = $this->getCurrentFrame();
+        $currentFrame->addRoll($pins);
+
+        if (count($currentFrame->rolls) === 2) {
+            $this->currentFrameIdx++;
+        }
     }
 
     public function getScore(): int {
-
-        return $this->score;
-    }
-
-    public function getCurrentFrame(): ?Frame {
-        if (count($this->frames) > $this->currentFrameIdx) {
-            return $this->frames[$this->currentFrameIdx];
+        $score = 0;
+        foreach ($this->frames as $frame) {
+            $score += $frame->getScore();
         }
-
-        return null;
+        return $score;
     }
 
     public function drawScoreboard(): void {
@@ -61,4 +55,11 @@ class Game {
         }
     }
 
+    private function getCurrentFrame(): ?Frame {
+        if (count($this->frames) > $this->currentFrameIdx) {
+            return $this->frames[$this->currentFrameIdx];
+        }
+
+        return null;
+    }
 }

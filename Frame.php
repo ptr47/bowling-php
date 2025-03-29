@@ -1,28 +1,29 @@
 <?php
 require_once 'Game.php';
 
-enum FrameType {
-    case Normal;
-    case Strike;
-    case Spare;
-}
 
 class Frame {
     /**
      * @var array<int>
      */
-    private array $rolls = [];
+    public array $rolls = [];
+    private int $bonusPoints = 0;
 
-    private FrameType $type = FrameType::Normal;
-
-    public function addRoll(int $score): void {
-        if (Game::isValidRoll($score)) {
-            $this->rolls[] = $score;
-            var_export($this->rolls);
+    public function addRoll(int $pins): void {
+        if (Game::isValidRoll($pins)) {
+            $this->rolls[] = $pins;
         }
     }
 
-    public function getRolls(): string {
-        return implode(',', $this->rolls);
+    public function isStrike(): bool {
+        return (count($this->rolls) === 1) and ($this->rolls[0] === 10);
+    }
+
+    public function isSpare(): bool {
+        return array_sum($this->rolls) === 10;
+    }
+
+    public function getScore(): int {
+        return array_sum($this->rolls) + $this->bonusPoints;
     }
 }
