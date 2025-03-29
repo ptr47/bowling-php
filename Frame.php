@@ -9,21 +9,25 @@ class Frame {
     public array $rolls = [];
     private int $bonusPoints = 0;
 
-    public function addRoll(int $pins): void {
+    public function addRoll(int $pins): void
+    {
         if (Game::isValidRoll($pins)) {
             $this->rolls[] = $pins;
         }
     }
 
-    public function isStrike(): bool {
-        return (count($this->rolls) === 1) and ($this->rolls[0] === 10);
+    public function isStrike(): bool
+    {
+        return (count($this->rolls) === 1) and $this->isSpare();
     }
 
-    public function isSpare(): bool {
+    public function isSpare(): bool
+    {
         return array_sum($this->rolls) === 10;
     }
 
-    public function getScore(): int {
+    public function getScore(): int
+    {
         return array_sum($this->rolls) + $this->bonusPoints;
     }
 }
