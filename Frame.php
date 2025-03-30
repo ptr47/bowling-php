@@ -26,17 +26,20 @@ class Frame
             return null;
         }
 
-        if (!$this->isLast or !$this->isStrike()) {
+        $isLastFrameWithBonus = $this->isLast and ($this->isStrike() or $this->isSpare());
+        if (!$isLastFrameWithBonus) {
             if (isset($this->rolls[0]) and ($this->rolls[0] + $pins > Game::MAX_PINS)) {
-                echo "Invalid roll.".PHP_EOL;
+                echo "Too many pins.".PHP_EOL;
 
                 return null;
             }
         }
         $this->rolls[] = $pins;
-        if ($this->isLast and ($this->isStrike() or $this->isSpare())) {
+        if ($isLastFrameWithBonus) {
             return isset($this->rolls[2]); # if the there were 3 rolls, returns true
-        } elseif (count($this->rolls) > 1 or $this->isStrike()) return true;
+        } elseif (count($this->rolls) > 1 or $this->isStrike()) {
+            return true;
+        }
 
         return false;
     }
@@ -68,8 +71,4 @@ class Frame
         return array_sum($this->rolls) + $this->bonusPoints;
     }
 
-    public function isLast(): bool
-    {
-        return $this->isLast;
-    }
 }

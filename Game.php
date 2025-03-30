@@ -49,9 +49,9 @@ class Game
         if ($rollOutput) {
             if (!is_null($lastFrame) and $lastFrame->isStrike()) {
                 $this->addBonusPointsToSecondLastFrame($currentFrame);
-                foreach ($currentFrame->rolls as $roll) {
-                    $lastFrame->addBonusPoints($roll);
-                }
+                $lastFrame->addBonusPoints($currentFrame->rolls[0]);
+                # if current frame is strike then rolls[1] is null
+                $lastFrame->addBonusPoints($currentFrame->rolls[1] ?? 0);
             } elseif (!is_null($lastFrame) and $lastFrame->isSpare()) {
                 $lastFrame->addBonusPoints($currentFrame->rolls[0]);
             }
