@@ -26,11 +26,9 @@ class Frame
         }
         $this->rolls[] = $pins;
 
-        if ($this->isStrike() and $this->isLast) return false;
-        elseif ($this->isStrike()) return true;
-        elseif ($this->isLast and $this->isSpare()) return false;
-        elseif (count($this->rolls) > 1) return true;
-        else return false;
+        if ($this->isLast and ($this->isStrike() or $this->isSpare())) return false;
+        elseif (count($this->rolls) > 1 or $this->isStrike()) return true;
+        return false;
     }
 
     public function isLastFrame(): bool
@@ -40,12 +38,12 @@ class Frame
 
     public function isStrike(): bool
     {
-        return (count($this->rolls) === 1) and $this->isSpare();
+        return $this->rolls[0] === Game::MAX_PINS;
     }
 
     public function isSpare(): bool
     {
-        return array_sum($this->rolls) === Game::MAX_PINS;
+        return array_sum($this->rolls) >= Game::MAX_PINS;
     }
 
     public function getScore(): int
