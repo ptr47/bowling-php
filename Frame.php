@@ -21,14 +21,14 @@ class Frame
     public function addRoll(int $pins): ?bool
     {
         if (!Game::isValidRoll($pins)) {
-            echo "Invalid roll.".PHP_EOL;
+            echo TEXT_RED."Invalid roll.".TEXT_RESET.PHP_EOL;
 
             return null;
         }
 
         $isLastFrameWithBonus = ($this->isLast and ($this->isStrike() or $this->isSpare()));
         if (!$isLastFrameWithBonus and isset($this->rolls[0]) and ($this->rolls[0] + $pins > Game::MAX_PINS)) {
-            echo "Too many pins.".PHP_EOL;
+            echo TEXT_RED."Too many pins.".TEXT_RESET.PHP_EOL;
 
             return null;
         }

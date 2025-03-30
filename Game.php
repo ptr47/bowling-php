@@ -1,6 +1,8 @@
 <?php
 require_once 'Frame.php';
-
+const TEXT_RED = "\033[0;31m";
+const TEXT_RESET = "\033[0m";
+const TEXT_BOLD = "\033[1m";
 class Game
 {
 
@@ -34,7 +36,7 @@ class Game
     {
 
         if (!self::isValidRoll($pins)) {
-            echo "Incorrect pin amount: ".$pins;
+            echo TEXT_RED."Incorrect pin amount: ".$pins.TEXT_RESET.PHP_EOL;
 
             return;
         }
@@ -84,7 +86,7 @@ class Game
         }
         echo "|".PHP_EOL;
         echo str_repeat("+---", count($this->frames))."+".PHP_EOL;
-        echo "Final score: ".$this->getScore().PHP_EOL;
+        echo TEXT_BOLD."Final score: ".$this->getScore().TEXT_RESET.PHP_EOL;
     }
 
     public function getCurrentFrameIdx(): int
