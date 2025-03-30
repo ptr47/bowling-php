@@ -39,10 +39,24 @@ class Game
             return;
         }
         $currentFrame = $this->frames[$this->currentFrameIdx];
+        $rollOutput = $currentFrame->addRoll($pins);
 
-        if ($currentFrame->addRoll($pins)) {
-            $this->currentFrameIdx++;
+        if (is_null($rollOutput)) {
+            return;
         }
+// TODO THIS NEEDS FIXING
+//        $lastFrame = $this->getLastFrame();
+//        if ($rollOutput) {
+//            if (!is_null($lastFrame) and $lastFrame->isStrike()) {
+//                if ($this->currentFrameIdx > 1 and $this->frames[$this->currentFrameIdx - 2]->isStrike()) {
+//                    $this->frames[$this->currentFrameIdx - 2]->addBonusPoints($pins);
+//                }
+//                $lastFrame->addBonusPoints($pins);
+//            }
+//            $this->currentFrameIdx++;
+//        } elseif (!is_null($lastFrame) and $lastFrame->isSpare()) {
+//            $lastFrame->addBonusPoints($pins);
+//        }
     }
 
     public function getScore(): int
@@ -69,5 +83,14 @@ class Game
     public function getCurrentFrameIdx(): int
     {
         return $this->currentFrameIdx;
+    }
+
+    private function getLastFrame(): ?Frame
+    {
+        if ($this->currentFrameIdx > 0) {
+            return $this->frames[$this->currentFrameIdx - 1];
+        }
+
+        return null;
     }
 }
