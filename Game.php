@@ -41,22 +41,29 @@ class Game
         $currentFrame = $this->frames[$this->currentFrameIdx];
         $rollOutput = $currentFrame->addRoll($pins);
 
+        $lastFrame = $this->getLastFrame();
         if (is_null($rollOutput)) {
             return;
         }
-// TODO THIS NEEDS FIXING
-//        $lastFrame = $this->getLastFrame();
-//        if ($rollOutput) {
-//            if (!is_null($lastFrame) and $lastFrame->isStrike()) {
-//                if ($this->currentFrameIdx > 1 and $this->frames[$this->currentFrameIdx - 2]->isStrike()) {
-//                    $this->frames[$this->currentFrameIdx - 2]->addBonusPoints($pins);
-//                }
-//                $lastFrame->addBonusPoints($pins);
-//            }
-//            $this->currentFrameIdx++;
-//        } elseif (!is_null($lastFrame) and $lastFrame->isSpare()) {
-//            $lastFrame->addBonusPoints($pins);
-//        }
+
+        if ($rollOutput) {
+            if (!is_null($lastFrame) and $lastFrame->isStrike()) {
+                $this->addBonusPointsToSecondLastFrame($currentFrame);
+                foreach ($currentFrame->rolls as $roll) {
+                    $lastFrame->addBonusPoints($roll);
+                }
+            } elseif (!is_null($lastFrame) and $lastFrame->isSpare()) {
+                $lastFrame->addBonusPoints($currentFrame->rolls[0]);
+            }
+            $this->currentFrameIdx++;
+        }
+    }
+
+    private function addBonusPointsToSecondLastFrame(Frame $currentFrame): void
+    {
+        if ($this->currentFrameIdx > 1 and $this->frames[$this->currentFrameIdx - 2]->isStrike()) {
+            $this->frames[$this->currentFrameIdx - 2]->addBonusPoints($currentFrame->rolls[0]);
+        }
     }
 
     public function getScore(): int

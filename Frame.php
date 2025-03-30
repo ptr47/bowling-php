@@ -4,12 +4,11 @@ require_once 'Game.php';
 class Frame
 {
     /**
-     * If isSpare then the third element is bonus points.
-     * If isStrike then the second and third element are bonus points
      * @var array<int>
      */
     public array $rolls = [];
     private bool $isLast;
+    private int $bonusPoints = 0;
 
     public function __construct(bool $isLast = false)
     {
@@ -47,7 +46,7 @@ class Frame
         if (!Game::isValidRoll($points)) {
             return;
         }
-        $this->rolls[] = $points;
+        $this->bonusPoints += $points;
     }
 
     public function isStrike(): bool
@@ -61,11 +60,16 @@ class Frame
 
     public function isSpare(): bool
     {
-        return count($this->rolls) > 2 and array_sum($this->rolls) >= Game::MAX_PINS;
+        return count($this->rolls) >= 2 and array_sum($this->rolls) >= Game::MAX_PINS;
     }
 
     public function getScore(): int
     {
-        return array_sum($this->rolls);
+        return array_sum($this->rolls) + $this->bonusPoints;
+    }
+
+    public function isLast(): bool
+    {
+        return $this->isLast;
     }
 }
