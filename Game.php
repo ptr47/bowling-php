@@ -32,22 +32,25 @@ class Game
         return $this->currentFrameIdx === count($this->frames);
     }
 
-    public function roll(int $pins): void
+    /**
+     * @return bool True if roll was successful
+     */
+    public function roll(int $pins): bool
     {
 
         if (!self::isValidRoll($pins)) {
             echo TEXT_RED."Incorrect pin amount: ".$pins.TEXT_RESET.PHP_EOL;
 
-            return;
+            return false;
         }
+
         $currentFrame = $this->frames[$this->currentFrameIdx];
         $rollOutput = $currentFrame->addRoll($pins);
-
-        $lastFrame = $this->getLastFrame();
         if (is_null($rollOutput)) {
-            return;
+            return false;
         }
 
+        $lastFrame = $this->getLastFrame();
         if ($rollOutput) {
             if (!is_null($lastFrame) and $lastFrame->isStrike()) {
                 $this->addBonusPointsToSecondLastFrame($currentFrame);
@@ -59,6 +62,8 @@ class Game
             }
             $this->currentFrameIdx++;
         }
+
+        return true;
     }
 
     private function addBonusPointsToSecondLastFrame(Frame $currentFrame): void
