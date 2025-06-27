@@ -23,4 +23,4 @@ while (!$game->isGameOver()) {
     }
 }
 
-$output->write($game->generateAsciiScoreboard());
+$output->generateScoreboard($game->getScoreboard());
