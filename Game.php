@@ -31,7 +31,8 @@ class Game
      */
     public function roll($pins): bool
     {
-
+        $pins ??= 0;
+        
         if (!Roll::isValidRoll($pins)) {
             Output::showError("Invalid roll.");
             return false;

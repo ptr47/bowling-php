@@ -6,12 +6,18 @@ require_once 'OutputStdout.php';
 require_once 'InputFile.php';
 require_once 'InputStdin.php';
 
+$shortOptions = "i:o:p:";
+$longOptions = [
+    "input:",
+    "output:",
+    "players:",
+];
 
-$args = new ConsoleArgs($argv)->getArgs();
-
-$input = isset($args['input']) ? new InputFile($args['input']) : new InputStdin();
-$output = isset($args['output']) ? new OutputFile($args['output']) : new OutputStdout();
-$playerCount = $args['players'] ?? 1;
+$args = getopt($shortOptions, $longOptions);
+$consoleArgs = new ConsoleArgs($args);
+$input = $consoleArgs->getInput();
+$output = $consoleArgs->getOutput();
+$playerCount = $consoleArgs->getPlayerCount();
 
 $game = new Game($playerCount);
 

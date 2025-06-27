@@ -2,47 +2,34 @@
 
 class ConsoleArgs
 {
-    private array $argv;
-    public function __construct($argv)
+    private array $args;
+    public function __construct($args)
     {
-        $this->argv = $argv;
+        $this->args = $args;
     }
-    public function getArgs(): array
+    public function getInput(): Input
     {
-        $args = [];
-        for ($i = 1; $i < count($this->argv); $i++) {
-            switch ($this->argv[$i]) {
-                case '-i':
-                    if (isset($this->argv[$i + 1])) {
-                        $args['input'] = $this->argv[$i + 1];
-                    } else {
-                        Output::showError("Error: -i requires a filename.");
-                        exit(1);
-                    }
-                    break;
-                case '-o':
-                    if (isset($this->argv[$i + 1])) {
-                        $args['output'] = $this->argv[$i + 1];
-                    } else {
-                        Output::showError("Error: -o requires a filename.");
-                        exit(1);
-                    }
-                    break;
-                case '-p':
-                    if (isset($this->argv[$i + 1])) {
-                        $args['players'] = intval($this->argv[$i + 1]);
-                        if ($args['players'] < 1) {
-                            Output::showError('Error: -p must be an integer larger than 0');
-                            exit(1);
-                        }
-                    } else {
-                        Output::showError('Error: -p requires a value.');
-                        exit(1);
-                    }
-                default:
-                    break;
-            }
+        $inputValue = $this->args['input'] ?? $this->args['i'] ?? null;
+
+        if ($inputValue) {
+            return new InputFile($this->args['i']);
         }
-        return $args;
+
+        return new InputStdin();
+    }
+    public function getOutput(): Output
+    {
+        $outputValue = $this->args['output'] ?? $this->args['o'] ?? null;
+
+        if ($outputValue) {
+            return new OutputFile($outputValue);
+        }
+
+        return new OutputStdout();
+    }
+    public function getPlayerCount(): int
+    {
+        $playerCount = $this->args['players'] ?? $this->args['p'] ?? 1;
+        return max(1, $playerCount);
     }
 }

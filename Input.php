@@ -2,5 +2,5 @@
 
 abstract class Input
 {
-    abstract public function getPinAmount(): int;
+    abstract public function getPinAmount(): int|null;
 }

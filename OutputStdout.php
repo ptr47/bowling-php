@@ -7,9 +7,9 @@ class OutputStdout extends Output
     {
         echo $text . PHP_EOL;
     }
-    public function generateScoreboard(array $scoreboard): void
+    public function generateScoreboard(array $scoreboardData): void
     {
-        $asciiScoreboard = $this->generateAsciiScoreboard($scoreboard);
+        $asciiScoreboard = $this->generateAsciiScoreboard($scoreboardData);
         echo $asciiScoreboard . PHP_EOL;
     }
     private function generateAsciiScoreboard(array $scoreboard): string
