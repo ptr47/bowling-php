@@ -1,12 +1,13 @@
 <?php
 require_once 'Game.php';
+require_once 'Roll.php';
 
 class Frame
 {
     /**
      * @var array<int>
      */
-    public array $rolls = [];
+    public private(set) array $rolls = [];
     private bool $isLast;
     private int $bonusPoints = 0;
 
@@ -20,22 +21,20 @@ class Frame
      */
     public function addRoll(int $pins): ?bool
     {
-        if (!Game::isValidRoll($pins)) {
-            echo TEXT_RED."Invalid roll.".TEXT_RESET.PHP_EOL;
-
+        if (!Roll::isValidRoll($pins)) {
+            Output::showError("Invalid roll.");
             return null;
         }
 
-        $isLastFrameWithBonus = ($this->isLast and ($this->isStrike() or $this->isSpare()));
-        if (!$isLastFrameWithBonus and isset($this->rolls[0]) and ($this->rolls[0] + $pins > Game::MAX_PINS)) {
-            echo TEXT_RED."Too many pins.".TEXT_RESET.PHP_EOL;
-
+        $isLastFrameWithBonus = $this->isLast and ($this->isStrike() or $this->isSpare());
+        if (!$isLastFrameWithBonus and isset($this->rolls[0]) and ($this->rolls[0] + $pins > Roll::MAX_PINS)) {
+            Output::showError("Too many pins.");
             return null;
         }
 
         $this->rolls[] = $pins;
         if ($this->isLast and ($this->isStrike() or $this->isSpare())) {
-            return isset($this->rolls[2]); # if the there were 3 rolls, returns true
+            return isset($this->rolls[2]); # if there were 3 rolls, returns true
         } elseif (count($this->rolls) > 1 or $this->isStrike()) {
             return true;
         }
@@ -45,7 +44,7 @@ class Frame
 
     public function addBonusPoints(int $points): void
     {
-        if (!Game::isValidRoll($points)) {
+        if (!Roll::isValidRoll($points)) {
             return;
         }
         $this->bonusPoints += $points;
@@ -54,7 +53,7 @@ class Frame
     public function isStrike(): bool
     {
         if (isset($this->rolls[0])) {
-            return $this->rolls[0] === Game::MAX_PINS;
+            return $this->rolls[0] === Roll::MAX_PINS;
         }
 
         return false;
@@ -62,7 +61,7 @@ class Frame
 
     public function isSpare(): bool
     {
-        return count($this->rolls) >= 2 and array_sum($this->rolls) >= Game::MAX_PINS;
+        return count($this->rolls) >= 2 and array_sum($this->rolls) >= Roll::MAX_PINS;
     }
 
     public function getScore(): int

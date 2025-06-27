@@ -1,12 +1,8 @@
 <?php
 require_once 'Frame.php';
-const TEXT_RED = "\033[0;31m";
-const TEXT_RESET = "\033[0m";
-const TEXT_BOLD = "\033[1m";
+require_once 'Roll.php';
 class Game
 {
-
-    const int MAX_PINS = 10;
 
     /**
      * @var array<Frame>
@@ -14,18 +10,16 @@ class Game
     private array $frames;
     private int $currentFrameIdx = 0;
 
-    public function __construct(int $framesAmount)
+    private const int FRAMES_AMOUNT = 10;
+
+    public function __construct()
     {
-        for ($i = 0; $i < $framesAmount - 1; $i++) {
+        for ($i = 0; $i < Game::FRAMES_AMOUNT - 1; $i++) {
             $this->frames[] = new Frame();
         }
         $this->frames[] = new Frame(true);
     }
 
-    static public function isValidRoll(int $pins): bool
-    {
-        return ($pins >= 0) and ($pins <= self::MAX_PINS);
-    }
 
     public function isGameOver(): bool
     {
@@ -35,29 +29,31 @@ class Game
     /**
      * @return bool True if roll was successful
      */
-    public function roll(int $pins): bool
+    public function roll($pins): bool
     {
-
-        if (!self::isValidRoll($pins)) {
-            echo TEXT_RED."Incorrect pin amount: ".$pins.TEXT_RESET.PHP_EOL;
-
+        
+        if (!Roll::isValidRoll($pins)) {
+            Output::showError("Invalid roll.");
             return false;
         }
 
         $currentFrame = $this->frames[$this->currentFrameIdx];
+        if ($currentFrame === null) {
+            Output::showError("");
+        }
         $rollOutput = $currentFrame->addRoll($pins);
-        if (is_null($rollOutput)) {
+        if ($rollOutput === null) {
             return false;
         }
 
         $lastFrame = $this->getLastFrame();
         if ($rollOutput) {
-            if (!is_null($lastFrame) and $lastFrame->isStrike()) {
+            if ($lastFrame and $lastFrame->isStrike()) {
                 $this->addBonusPointsToSecondLastFrame($currentFrame);
                 $lastFrame->addBonusPoints($currentFrame->rolls[0]);
                 # if current frame is strike then rolls[1] is null
                 $lastFrame->addBonusPoints($currentFrame->rolls[1] ?? 0);
-            } elseif (!is_null($lastFrame) and $lastFrame->isSpare()) {
+            } elseif ($lastFrame and $lastFrame->isSpare()) {
                 $lastFrame->addBonusPoints($currentFrame->rolls[0]);
             }
             $this->currentFrameIdx++;
@@ -83,20 +79,30 @@ class Game
         return $score;
     }
 
-    public function drawScoreboard(): void
+    public function getScoreboard(): array
     {
-        echo str_repeat("+---", count($this->frames))."+".PHP_EOL;
-        foreach ($this->frames as $frame) {
-            echo "|".str_pad($frame->getScore(), 3);
+        $scoreboard = [];
+        foreach($this->frames as $iter => $frame)
+        {
+            $scoreboard[$iter+1] = $frame->getScore();
         }
-        echo "|".PHP_EOL;
-        echo str_repeat("+---", count($this->frames))."+".PHP_EOL;
-        echo TEXT_BOLD."Final score: ".$this->getScore().TEXT_RESET.PHP_EOL;
+        $scoreboard['total'] = $this->getScore();
+        return $scoreboard;
+    }
+
+    public function getFrameCount(): int
+    {
+        return count($this->frames);
     }
 
     public function getCurrentFrameIdx(): int
     {
-        return $this->currentFrameIdx;
+        return $this->currentFrameIdx + 1;
+    }
+
+    private function getCurrentFrame(): ?Frame
+    {
+        return $this->frames[$this->currentFrameIdx - 1] ?? null;
     }
 
     private function getLastFrame(): ?Frame
