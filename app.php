@@ -6,7 +6,6 @@ require_once 'OutputStdout.php';
 require_once 'InputFile.php';
 require_once 'InputStdin.php';
 
-$game = new Game();
 
 $args = new ConsoleArgs($argv)->getArgs();
 
@@ -14,12 +13,14 @@ $input = isset($args['input']) ? new InputFile($args['input']) : new InputStdin(
 $output = isset($args['output']) ? new OutputFile($args['output']) : new OutputStdout();
 $playerCount = $args['players'] ?? 1;
 
+$game = new Game($playerCount);
+
 while (!$game->isGameOver()) {
-    $output->showCurrentFrame($game->getCurrentFrameIdx());
+    $output->write($game->getCurrentFrameString());
     $pins = $input->getPinAmount();
     if ($game->roll($pins)) {
-        $output->showCurrentScore($game->getScore());
+        $output->write($game->getScoreString());
     }
 }
 
-$output->drawScoreboard($game->getScoreboard());
+$output->write($game->generateAsciiScoreboard());

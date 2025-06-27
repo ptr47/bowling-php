@@ -8,17 +8,10 @@ class OutputFile extends Output
     {
         $this->filePath = $filePath;
     }
-    public function showCurrentFrame(int $frameIdx): void
+    public function write(string $text): void
     {
-    }
-
-    public function showCurrentScore(int $score): void
-    {
-    }
-    public function drawScoreboard(array $scoreboard): void
-    {
-        $file = fopen($this->filePath, 'w');
-        fwrite($file, $this->formatScoreboard($scoreboard));
+        $file = fopen($this->filePath,'w');
+        fwrite($file, $text);
         fclose($file);
     }
 }

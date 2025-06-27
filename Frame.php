@@ -8,38 +8,36 @@ class Frame
      * @var array<int>
      */
     public private(set) array $rolls = [];
+    public private(set) int $number;
     private bool $isLast;
     private int $bonusPoints = 0;
-
-    public function __construct(bool $isLast = false)
+    public private(set) bool $isFinished = false;
+    public function __construct(int $number)
     {
-        $this->isLast = $isLast;
+        $this->number = $number;
+        $this->isLast = $number === Game::FRAMES_AMOUNT - 1;
     }
 
-    /**
-     * @return bool|null True, if the frame has max rolls and the game can advance
-     */
-    public function addRoll(int $pins): ?bool
+    public function addRoll(int $pins): void
     {
         if (!Roll::isValidRoll($pins)) {
             Output::showError("Invalid roll.");
-            return null;
+            return;
         }
 
         $isLastFrameWithBonus = $this->isLast and ($this->isStrike() or $this->isSpare());
         if (!$isLastFrameWithBonus and isset($this->rolls[0]) and ($this->rolls[0] + $pins > Roll::MAX_PINS)) {
             Output::showError("Too many pins.");
-            return null;
+            return;
         }
 
         $this->rolls[] = $pins;
         if ($this->isLast and ($this->isStrike() or $this->isSpare())) {
-            return isset($this->rolls[2]); # if there were 3 rolls, returns true
+            $this->isFinished = isset($this->rolls[2]); # if there were 3 rolls, returns true
         } elseif (count($this->rolls) > 1 or $this->isStrike()) {
-            return true;
+            $this->isFinished = true;
         }
-
-        return false;
+        return;
     }
 
     public function addBonusPoints(int $points): void

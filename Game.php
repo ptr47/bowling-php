@@ -1,29 +1,29 @@
 <?php
 require_once 'Frame.php';
 require_once 'Roll.php';
+require_once 'Player.php';
+
 class Game
 {
-
-    /**
-     * @var array<Frame>
-     */
-    private array $frames;
     private int $currentFrameIdx = 0;
+    public const int FRAMES_AMOUNT = 3;
+    /**
+     * @var Player[]
+     */
+    private array $players = [];
+    private int $currentPlayerIdx = 0;
 
-    private const int FRAMES_AMOUNT = 10;
-
-    public function __construct()
+    public function __construct(int $playerCount)
     {
-        for ($i = 0; $i < Game::FRAMES_AMOUNT - 1; $i++) {
-            $this->frames[] = new Frame();
+        for ($i = 0; $i < $playerCount; $i++) {
+            $this->players[] = new Player($i);
         }
-        $this->frames[] = new Frame(true);
     }
 
 
     public function isGameOver(): bool
     {
-        return $this->currentFrameIdx === count($this->frames);
+        return $this->currentFrameIdx === Game::FRAMES_AMOUNT;
     }
 
     /**
@@ -31,86 +31,94 @@ class Game
      */
     public function roll($pins): bool
     {
-        
+
         if (!Roll::isValidRoll($pins)) {
             Output::showError("Invalid roll.");
             return false;
         }
 
-        $currentFrame = $this->frames[$this->currentFrameIdx];
-        if ($currentFrame === null) {
-            Output::showError("");
-        }
-        $rollOutput = $currentFrame->addRoll($pins);
-        if ($rollOutput === null) {
-            return false;
-        }
+        $currentPlayer = $this->players[$this->currentPlayerIdx];
+        $isPlayerFinished = $currentPlayer->roll($pins, $this->currentFrameIdx);
+        if ($isPlayerFinished) {
+            $this->currentPlayerIdx++;
 
-        $lastFrame = $this->getLastFrame();
-        if ($rollOutput) {
-            if ($lastFrame and $lastFrame->isStrike()) {
-                $this->addBonusPointsToSecondLastFrame($currentFrame);
-                $lastFrame->addBonusPoints($currentFrame->rolls[0]);
-                # if current frame is strike then rolls[1] is null
-                $lastFrame->addBonusPoints($currentFrame->rolls[1] ?? 0);
-            } elseif ($lastFrame and $lastFrame->isSpare()) {
-                $lastFrame->addBonusPoints($currentFrame->rolls[0]);
+            if ($this->currentPlayerIdx === count($this->players)) {
+                $this->currentPlayerIdx = 0;
+                $this->currentFrameIdx++;
             }
-            $this->currentFrameIdx++;
         }
 
         return true;
     }
 
-    private function addBonusPointsToSecondLastFrame(Frame $currentFrame): void
+    public function getScoreString(): string
     {
-        if ($this->currentFrameIdx > 1 and $this->frames[$this->currentFrameIdx - 2]->isStrike()) {
-            $this->frames[$this->currentFrameIdx - 2]->addBonusPoints($currentFrame->rolls[0]);
+        $result = "";
+        foreach ($this->players as $iter => $player) {
+            $playerNumber = $iter+1;
+            $result .= "| Player {$playerNumber}: {$player->getScore()} |";
         }
+        return $result;
     }
-
-    public function getScore(): int
-    {
-        $score = 0;
-        foreach ($this->frames as $frame) {
-            $score += $frame->getScore();
-        }
-
-        return $score;
-    }
-
-    public function getScoreboard(): array
+    private function getScoreboard(): array
     {
         $scoreboard = [];
-        foreach($this->frames as $iter => $frame)
-        {
-            $scoreboard[$iter+1] = $frame->getScore();
+        foreach ($this->players as $iter => $player) {
+            $scoreboard['player ' . $iter + 1] = $player->getScoreboard();
         }
-        $scoreboard['total'] = $this->getScore();
         return $scoreboard;
     }
 
-    public function getFrameCount(): int
+    public function generateAsciiScoreboard(): string
     {
-        return count($this->frames);
-    }
+        $output = '';
 
-    public function getCurrentFrameIdx(): int
-    {
-        return $this->currentFrameIdx + 1;
-    }
+        $framesAmount = self::FRAMES_AMOUNT;
+        $scoreboard = $this->getScoreboard();
 
-    private function getCurrentFrame(): ?Frame
-    {
-        return $this->frames[$this->currentFrameIdx - 1] ?? null;
-    }
+        $playerColWidth = 12;
+        $frameColWidths = array_fill(0, $framesAmount, 5);
+        $totalColWidth = 7;
 
-    private function getLastFrame(): ?Frame
-    {
-        if ($this->currentFrameIdx > 0) {
-            return $this->frames[$this->currentFrameIdx - 1];
+        // --- Construct the Separator Line ---
+        $separator = '+' . str_repeat('-', $playerColWidth);
+        for ($i = 0; $i < $framesAmount; $i++) {
+            $separator .= '+' . str_repeat('-', $frameColWidths[$i]);
+        }
+        $separator .= '+' . str_repeat('-', $totalColWidth) . '+';
+        $output .= $separator . PHP_EOL;
+
+        // --- Construct the Header Row ---
+        $header = '|' . str_pad('Player', $playerColWidth, ' ', STR_PAD_BOTH);
+        for ($i = 0; $i < $framesAmount; $i++) {
+            $header .= '|' . str_pad('F' . ($i + 1), $frameColWidths[$i], ' ', STR_PAD_BOTH);
+        }
+        $header .= '|' . str_pad('Total', $totalColWidth, ' ', STR_PAD_BOTH) . '|';
+        $output .= $header . PHP_EOL;
+
+        $output .= $separator . PHP_EOL;
+
+        // --- Construct Data Rows ---
+        foreach ($scoreboard as $playerName => $data) {
+            $row = '| ' . str_pad($playerName, $playerColWidth - 1, ' ', STR_PAD_RIGHT);
+            for ($i = 0; $i < $framesAmount; $i++) {
+                $score = $data[$i] ?? '';
+                $row .= '|' . str_pad((string) $score, $frameColWidths[$i], ' ', STR_PAD_BOTH);
+            }
+            $totalScore = $data['total'] ?? '';
+            $row .= '|' . str_pad((string) $totalScore, $totalColWidth, ' ', STR_PAD_BOTH) . '|';
+            $output .= $row . PHP_EOL;
         }
 
-        return null;
+        // --- Add the bottom separator line ---
+        $output .= $separator . PHP_EOL;
+
+        return $output;
+    }
+    public function getCurrentFrameString(): string
+    {
+        $player = $this->currentPlayerIdx + 1;
+        $frame = $this->currentFrameIdx + 1;
+        return "Player {$player} - Frame {$frame}";
     }
 }
