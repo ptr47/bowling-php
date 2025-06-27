@@ -1,23 +1,24 @@
 <?php
+namespace BowlingPhp;
 
-class ConsoleArgs
+class IOHandlersFactory
 {
     private array $args;
     public function __construct($args)
     {
         $this->args = $args;
     }
-    public function getInput(): Input
+    public function getInputHandler(): Input
     {
         $inputValue = $this->args['input'] ?? $this->args['i'] ?? null;
 
         if ($inputValue) {
-            return new InputFile($this->args['i']);
+            return new InputFile($inputValue);
         }
 
         return new InputStdin();
     }
-    public function getOutput(): Output
+    public function getOutputHandler(): Output
     {
         $outputValue = $this->args['output'] ?? $this->args['o'] ?? null;
 

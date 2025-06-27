@@ -1,0 +1,26 @@
+{
+    "name": "ptr47/bowling-php",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BowlingPhp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BowlingPhp\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ptr47"
+        }
+    ],
+    "require": {
+        "php": ">=8.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
+    }
+}

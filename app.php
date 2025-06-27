@@ -1,10 +1,9 @@
 <?php
-require_once 'Game.php';
-require_once 'ConsoleArgs.php';
-require_once 'OutputFile.php';
-require_once 'OutputStdout.php';
-require_once 'InputFile.php';
-require_once 'InputStdin.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use BowlingPhp\IOHandlersFactory;
+use BowlingPhp\Lane;
+use BowlingPhp\PlayersFactory;
 
 $shortOptions = "i:o:p:";
 $longOptions = [
@@ -14,19 +13,23 @@ $longOptions = [
 ];
 
 $args = getopt($shortOptions, $longOptions);
-$consoleArgs = new ConsoleArgs($args);
-$input = $consoleArgs->getInput();
-$output = $consoleArgs->getOutput();
-$playerCount = $consoleArgs->getPlayerCount();
+$ioHandlersFactory = new IOHandlersFactory($args);
+$input = $ioHandlersFactory->getInputHandler();
+$output = $ioHandlersFactory->getOutputHandler();
+$playerCount = $ioHandlersFactory->getPlayerCount();
 
-$game = new Game($playerCount);
+$players = new PlayersFactory()->createPlayers($playerCount);
+$lane = new Lane($players);
 
-while (!$game->isGameOver()) {
-    $output->write($game->getCurrentFrameString());
+while (!$lane->isGameOver()) {
+    $output->writeCurrentFrame($lane->getCurrentFrame());
     $pins = $input->getPinAmount();
-    if ($game->roll($pins)) {
-        $output->write($game->getScoreString());
+    try {
+        $lane->roll($pins);
+        $output->write($lane->getScoreString());
+    } catch (Exception $e) {
+        $output->writeError($e->getMessage());
     }
 }
 
-$output->generateScoreboard($game->getScoreboard());
+$output->generateScoreboard($lane->getScoreboard());

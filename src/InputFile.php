@@ -1,5 +1,7 @@
 <?php
-require_once 'Input.php';
+namespace BowlingPhp;
+
+use RuntimeException;
 
 class InputFile extends Input
 {
@@ -20,9 +22,9 @@ class InputFile extends Input
             $this->file = fopen($this->filePath, "r");
         }
         if ($this->file === false) {
-            Output::showError("Error: File {$this->filePath} didn't open correctly");
-            return null;
+            throw new RuntimeException("File {$this->filePath} didn't open correctly.");
         }
+
         $pins = 0;
         if (!feof($this->file)) {
             $line = fgets($this->file);

@@ -3,3 +3,11 @@
 *.iml
 out
 gen
+# VSCode
+.vscode
+# Composer
+vendor/
+composer.lock
+
+
+.phpunit.cache/test-results

@@ -1,4 +1,5 @@
 <?php
+namespace BowlingPhp;
 
 class Roll
 {

@@ -1,6 +1,8 @@
 <?php
-require_once 'Game.php';
-require_once 'Roll.php';
+namespace BowlingPhp;
+
+use InvalidArgumentException;
+use function PHPUnit\Framework\throwException;
 
 class Frame
 {
@@ -12,23 +14,22 @@ class Frame
     private bool $isLast;
     private int $bonusPoints = 0;
     public private(set) bool $isFinished = false;
-    public function __construct(int $number)
+    public bool $isBonusAdded = false;
+    public function __construct(int $number, int $framesAmount)
     {
         $this->number = $number;
-        $this->isLast = $number === Game::FRAMES_AMOUNT - 1;
+        $this->isLast = $number === $framesAmount - 1;
     }
 
     public function addRoll(int $pins): void
     {
-        if (!Roll::isValidRoll($pins)) {
-            Output::showError("Invalid roll.");
-            return;
-        }
-
-        $isLastFrameWithBonus = $this->isLast and ($this->isStrike() or $this->isSpare());
-        if (!$isLastFrameWithBonus and isset($this->rolls[0]) and ($this->rolls[0] + $pins > Roll::MAX_PINS)) {
-            Output::showError("Too many pins.");
-            return;
+        $isLastFrameWithBonus = $this->isLast && ($this->isStrike() or $this->isSpare());
+        if (
+            !$isLastFrameWithBonus and
+            isset($this->rolls[0]) and
+            ($this->rolls[0] + $pins > Roll::MAX_PINS)
+        ) {
+            throw new InvalidArgumentException("Too many pins.");
         }
 
         $this->rolls[] = $pins;
@@ -42,10 +43,8 @@ class Frame
 
     public function addBonusPoints(int $points): void
     {
-        if (!Roll::isValidRoll($points)) {
-            return;
-        }
         $this->bonusPoints += $points;
+        $this->isBonusAdded = true;
     }
 
     public function isStrike(): bool

@@ -1,5 +1,5 @@
 <?php
-require_once 'Input.php';
+namespace BowlingPhp;
 
 class InputStdin extends Input
 {

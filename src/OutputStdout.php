@@ -1,11 +1,21 @@
 <?php
-require_once 'Output.php';
+namespace BowlingPhp;
 
 class OutputStdout extends Output
 {
     public function write(string $text): void
     {
         echo $text . PHP_EOL;
+    }
+    public function writeError(string $text): void
+    {
+        echo TEXT_RED . $text . TEXT_RESET . PHP_EOL;
+    }
+    public function writeCurrentFrame(array $currentFrameData): void
+    {
+        $playerIdx = $currentFrameData['playerIdx'];
+        $frameIdx = $currentFrameData['frameIdx'];
+        echo "Player {$playerIdx} - Frame {$frameIdx}" . PHP_EOL;
     }
     public function generateScoreboard(array $scoreboardData): void
     {
