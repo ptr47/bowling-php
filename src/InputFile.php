@@ -22,10 +22,9 @@ class InputFile extends Input
             $this->file = fopen($this->filePath, "r");
         }
         if ($this->file === false) {
-            throw new RuntimeException("File {$this->filePath} didn't open correctly.");
+            throw new RuntimeException("File $this->filePath didn't open correctly.");
         }
 
-        $pins = 0;
         if (!feof($this->file)) {
             $line = fgets($this->file);
             $pins = intval($line);

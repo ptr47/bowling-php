@@ -24,7 +24,7 @@ class OutputFile extends Output
     {
         $playerIdx = $currentFrameData['playerIdx'];
         $frameIdx = $currentFrameData['frameIdx'];
-        $text = "Player {$playerIdx} - Frame {$frameIdx}" . PHP_EOL;
+        $text = "Player $playerIdx - Frame $frameIdx".PHP_EOL;
         $file = fopen($this->filePath, 'w');
         fwrite($file, $text);
         fclose($file);

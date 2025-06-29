@@ -1,7 +1,6 @@
 <?php
 namespace BowlingPhp;
 
-use BowlingPhp\Player;
 use InvalidArgumentException;
 
 class PlayersFactory
@@ -14,14 +13,14 @@ class PlayersFactory
         }
         return $players;
     }
-    public function createPlayersWithNames(array $names, Game $game): array
+    public function createPlayersWithNames(array $names, Game $game = new Game()): array
     {
         $players = [];
         foreach ($names as $name) {
             if (!is_string($name)) {
                 throw new InvalidArgumentException("Player names should be of type string.");
             }
-            $players[] = new Player($name, new Game());
+            $players[] = new Player($name, $game);
         }
         return $players;
     }

@@ -15,7 +15,7 @@ class OutputStdout extends Output
     {
         $playerIdx = $currentFrameData['playerIdx'];
         $frameIdx = $currentFrameData['frameIdx'];
-        echo "Player {$playerIdx} - Frame {$frameIdx}" . PHP_EOL;
+        echo "Player $playerIdx - Frame $frameIdx".PHP_EOL;
     }
     public function generateScoreboard(array $scoreboardData): void
     {
@@ -52,7 +52,7 @@ class OutputStdout extends Output
 
         // --- Construct Data Rows ---
         foreach ($scoreboard as $playerName => $data) {
-            $row = '| ' . str_pad($playerName, $playerColWidth - 1, ' ', STR_PAD_RIGHT);
+            $row = '| ' . str_pad($playerName, $playerColWidth - 1);
             for ($i = 0; $i < $framesAmount; $i++) {
                 $score = $data[$i] ?? '';
                 $row .= '|' . str_pad((string) $score, $frameColWidths[$i], ' ', STR_PAD_BOTH);

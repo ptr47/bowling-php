@@ -2,18 +2,17 @@
 namespace BowlingPhp;
 
 use InvalidArgumentException;
-use function PHPUnit\Framework\throwException;
 
 class Frame
 {
     /**
      * @var array<int>
      */
-    public private(set) array $rolls = [];
-    public private(set) int $number;
+    private(set) array $rolls = [];
+    private(set) int $number;
     private bool $isLast;
     private int $bonusPoints = 0;
-    public private(set) bool $isFinished = false;
+    private(set) bool $isFinished = false;
     public bool $isBonusAdded = false;
     public function __construct(int $number, int $framesAmount)
     {
@@ -38,7 +37,6 @@ class Frame
         } elseif (count($this->rolls) > 1 or $this->isStrike()) {
             $this->isFinished = true;
         }
-        return;
     }
 
     public function addBonusPoints(int $points): void

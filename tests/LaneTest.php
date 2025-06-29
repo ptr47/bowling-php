@@ -7,7 +7,6 @@ use BowlingPhp\Lane;
 use BowlingPhp\PlayersFactory;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 

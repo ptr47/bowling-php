@@ -9,7 +9,8 @@ class Lane
      * @var Player[]
      */
     private array $players = [];
-    public private(set) int $currentPlayerIdx = 0;
+    private string $id;
+    private(set) int $currentPlayerIdx = 0;
 
     public function __construct(array $players = [new Player(1)])
     {
@@ -20,16 +21,12 @@ class Lane
             throw new InvalidArgumentException("All players should be of type Player.");
         }
         $this->players = $players;
+        $this->id = uniqid();
     }
 
     public function isGameOver(): bool
     {
-        foreach ($this->players as $player) {
-            if (!$player->getGame()->isGameOver()) {
-                return false;
-            }
-        }
-        return true;
+        return array_all($this->players, fn($player) => $player->getGame()->isGameOver());
     }
 
     public function roll(?int $pins): void
@@ -64,7 +61,7 @@ class Lane
         $result = "";
         foreach ($this->players as $iter => $player) {
             $playerNumber = $iter + 1;
-            $result .= "| Player {$playerNumber}: {$player->getScore()} |";
+            $result .= "| Player $playerNumber: {$player->getScore()} |";
         }
         return $result;
     }
@@ -103,5 +100,10 @@ class Lane
             }
         }
         return $winners;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 }

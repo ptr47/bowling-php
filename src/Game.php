@@ -17,10 +17,10 @@ class Game
             $this->frames[$i] = new Frame($i, $this::FRAMES_AMOUNT);
         }
     }
+
     /**
-     * @param int $amount amount of pins to roll
-     * @param int $frameIndex current frame index
-     * @return bool True if a frame was finished, false otherwise. 
+     * @param int $amount number of pins to roll
+     * @return bool True if a frame was finished, false otherwise.
      */
     public function roll(int $amount): bool
     {
