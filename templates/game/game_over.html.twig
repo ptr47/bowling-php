@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Game Over! - Lane {{ laneId }}
+{% endblock %}
+
+{% block body %}
+  <main>
+    <h1>Bowling Game - Lane {{ laneId }}</h1>
+
+    <div class="game-over-message">
+      <h2>Game Over!</h2>
+      <h3>{{ winners }}</h3>
+      <p>Scoreboard:</p>
+      {% include 'game/scoreboard.html.twig' %}
+      <a href="{{ path('app_game_new') }}" class="button">Play Again</a>
+    </div>
+  </main>
+{% endblock %}

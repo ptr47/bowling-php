@@ -1,0 +1,21 @@
+{# templates/game_setup/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Bowling Game Setup
+{% endblock %}
+
+{% block body %}
+  <main>
+    <h1>Bowling Game</h1>
+
+    <h2>Choose the number of players</h2>
+
+    <div class="form">{{ form(newGameForm) }}</div>
+
+    <div class="form">{{ form(loadGameForm) }}</div>
+
+    {% include 'errors.html.twig' %}
+  </main>
+{% endblock %}

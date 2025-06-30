@@ -1,10 +1,10 @@
 <?php
-namespace BowlingPhp;
+namespace App\Infrastructure\Output;
 
 const TEXT_RED = "\033[0;31m";
 const TEXT_RESET = "\033[0m";
 const TEXT_BOLD = "\033[1m";
-abstract class Output
+abstract class AbstractOutput
 {
     abstract public function write(string $text): void;
     abstract public function writeError(string $text): void;

@@ -1,0 +1,28 @@
+{% if scoreboardData is empty %}
+  <p>No scoreboard available to display.</p>
+{% else %}
+  <table class="bowling-score-table">
+    <thead>
+      <tr>
+        <th>Player</th>
+        {% for i in 0..10 - 1 %}
+          <th>Frame {{ i + 1 }}</th>
+        {% endfor %}
+        <th>Total Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for playerName, playerScores in scoreboardData %}
+        <tr>
+          <td>{{ playerName }}</td>
+          {% for i in 0..10 - 1 %}
+            <td>{{ playerScores[i] is defined ? playerScores[i] : '-' }}</td>
+          {% endfor %}
+          <td>
+            <strong>{{ playerScores.total is defined ? playerScores.total : '-' }}</strong>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

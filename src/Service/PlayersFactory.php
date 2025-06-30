@@ -1,6 +1,8 @@
 <?php
-namespace BowlingPhp;
+namespace App\Service;
 
+use App\Domain\Game;
+use App\Domain\Player;
 use InvalidArgumentException;
 
 class PlayersFactory

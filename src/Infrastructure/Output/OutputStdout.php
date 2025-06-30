@@ -1,7 +1,9 @@
 <?php
-namespace BowlingPhp;
+namespace App\Infrastructure\Output;
 
-class OutputStdout extends Output
+use App\Domain\Game;
+
+class OutputStdout extends AbstractOutput
 {
     public function write(string $text): void
     {
@@ -15,7 +17,7 @@ class OutputStdout extends Output
     {
         $playerIdx = $currentFrameData['playerIdx'];
         $frameIdx = $currentFrameData['frameIdx'];
-        echo "Player $playerIdx - Frame $frameIdx".PHP_EOL;
+        echo "Player $playerIdx - Frame $frameIdx" . PHP_EOL;
     }
     public function generateScoreboard(array $scoreboardData): void
     {

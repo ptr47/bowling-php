@@ -1,9 +1,9 @@
 <?php
-namespace BowlingPhp;
+namespace App\Infrastructure\Input;
 
 use RuntimeException;
 
-class InputFile extends Input
+class InputFile extends AbstractInput
 {
     private string $filePath;
     private $file;

@@ -1,5 +1,8 @@
 <?php
-namespace BowlingPhp;
+namespace App\Service;
+
+use App\Infrastructure\Input as Input;
+use App\Infrastructure\Output as Output;
 
 class IOHandlersFactory
 {
@@ -8,25 +11,25 @@ class IOHandlersFactory
     {
         $this->args = $args;
     }
-    public function getInputHandler(): Input
+    public function getInputHandler(): Input\AbstractInput
     {
         $inputValue = $this->args['input'] ?? $this->args['i'] ?? null;
 
         if ($inputValue) {
-            return new InputFile($inputValue);
+            return new Input\InputFile($inputValue);
         }
 
-        return new InputStdin();
+        return new Input\InputStdin();
     }
-    public function getOutputHandler(): Output
+    public function getOutputHandler(): Output\AbstractOutput
     {
         $outputValue = $this->args['output'] ?? $this->args['o'] ?? null;
 
         if ($outputValue) {
-            return new OutputFile($outputValue);
+            return new Output\OutputFile($outputValue);
         }
 
-        return new OutputStdout();
+        return new Output\OutputStdout();
     }
     public function getPlayerCount(): int
     {

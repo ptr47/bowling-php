@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Playing - Lane {{ laneId }}
+{% endblock %}
+
+{% block body %}
+  <main>
+    <h1>Bowling Game - Lane {{ laneId }}</h1>
+
+    <div class="game-info">
+      <p>Now playing: Player {{ playerIdx }} - Frame {{ frameIdx }}</p>
+      {% include 'game/scoreboard.html.twig' %}
+    </div>
+    <div class="form">{{ form(rollForm) }}</div>
+
+    {% include 'errors.html.twig' %}
+  </main>
+{% endblock %}

@@ -1,7 +1,7 @@
 <?php
-namespace BowlingPhp;
+namespace App\Infrastructure\Input;
 
-abstract class Input
+abstract class AbstractInput
 {
     abstract public function getPinAmount(): int|null;
 }

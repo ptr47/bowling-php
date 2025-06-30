@@ -1,5 +1,5 @@
 <?php
-namespace BowlingPhp;
+namespace App\Domain;
 
 use InvalidArgumentException;
 

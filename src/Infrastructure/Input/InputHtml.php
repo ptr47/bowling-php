@@ -1,7 +1,7 @@
 <?php
-namespace BowlingPhp;
+namespace App\Infrastructure\Input;
 
-class InputHtml extends Input
+class InputHtml extends AbstractInput
 {
     public function getPinAmount(): int|null
     {
